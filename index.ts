@@ -16,6 +16,13 @@ io.bind(engine);
 io.on("connection", (socket) => {
   console.log("✅ Client connected:", socket.id);
 
+  // Skicka IP och välkomstmeddelande till klienten
+  io.emit("cir_ter", {
+    ip: socket.handshake.address,
+    msg: "Välkommen till Chasqui.se",
+    id: socket.id,
+  });
+
   socket.onAny((event, data) => {
     console.log(`📨 Event: ${event}`, data);
     socket.broadcast.emit(event, data);
