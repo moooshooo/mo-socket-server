@@ -14,6 +14,12 @@ const engine = new Engine({
 const io = new Server();
 io.bind(engine);
 
+const defaultRooms = [
+  { id: 'room-1', name: 'Allmänt' },
+  { id: 'room-2', name: 'Kodhjälp' },
+  { id: 'room-3', name: 'Off-topic' }
+];
+
 // När en klient ansluter
 io.on("connection", (socket) => {
   const clientID = socket.id;
@@ -21,6 +27,15 @@ io.on("connection", (socket) => {
 
   console.log(`✅ Ny anslutning: ${clientID} (${time})`);
   console.log(`👥 Totalt anslutna: ${io.engine.clientsCount}`);
+
+  // Skicka lista på rum
+  socket.emit('room_list', defaultRooms);
+
+  // Lyssna på när användaren vill gå med i ett rum
+  socket.on('join_room', (roomId) => {
+    socket.join(roomId);
+    console.log(`User joined room: ${roomId}`);
+  });
 
   // 1️⃣ Hälsa den nya användaren personligen
   socket.emit("welcome_message", {
